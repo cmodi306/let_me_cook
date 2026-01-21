@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Recipe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 40px auto;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 20px;
+        }
+        input, textarea, button, select{
+            width: 100%;
+            padding: 8px;
+            margin-top: 6px;
+            box-sizing: border-box;
+        }
+        .ingredient-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .ingredient-row input {
+            flex: 1;
+        }
+        .ingredient-row button {
+            width: auto;
+        }
+        .add-btn {
+            margin-top: 10px;
+        }
+        .save-btn {
+            margin-top: 30px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Add Recipe</h2>
+
+<label for="dishName">Name of the dish</label>
+<input type="text" id="dishName" placeholder="e.g. Paneer Butter Masala">
+
+<label>Ingredients</label>
+<div id="ingredients">
+    <div class="ingredient-row">
+        <input type="text" placeholder="Ingredient">
+        <button type="button" onclick="removeIngredient(this)">❌</button>
+    </div>
+</div>
+
+<button type="button" class="add-btn" onclick="addIngredient()">➕ Add Ingredient</button>
+
+<label for="procedure">Procedure</label>
+<textarea id="procedure" rows="6" placeholder="Write cooking steps here..."></textarea>
+
+<label for="category">Category</label>
+<select id="category">
+    <option value="">Select category</option>
+    <option value="easy_meals">Easy meals</option>
+    <option value="time_taking_meals">Time-taking meals</option>
+</select>
+
+
+<button type="button" class="save-btn" onclick="submitRecipe()">Save Recipe</button>
+
+<script>
+function addIngredient() {
+    const container = document.getElementById("ingredients");
+
+    const row = document.createElement("div");
+    row.className = "ingredient-row";
+
+    row.innerHTML = `
+        <input type="text" placeholder="Ingredient">
+        <button type="button" onclick="removeIngredient(this)">❌</button>
+    `;
+
+    container.appendChild(row);
+}
+
+function removeIngredient(button) {
+    const rows = document.querySelectorAll(".ingredient-row");
+    if (rows.length > 1) {
+        button.parentElement.remove();
+    }
+}
+
+function submitRecipe() {
+    const dishName = document.getElementById("dishName").value.trim();
+    const procedure = document.getElementById("procedure").value.trim();
+    const category = document.getElementById("category").value;
+
+    const ingredients = [];
+    document.querySelectorAll("#ingredients input").forEach(input => {
+        if (input.value.trim() !== "") {
+            ingredients.push(input.value.trim());
+        }
+    });
+
+    if (!dishName || ingredients.length === 0 || !procedure || !category) {
+        alert("Please fill all fields and select category");
+        return;
+    }
+
+    fetch("http://localhost:8000/recipe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            name: dishName,
+            ingredients: ingredients,
+            procedure: procedure,
+            category: category
+        })
+    })
+    .then(res => res.json())
+    .then(() => {
+        alert("Recipe saved successfully");
+    })
+    .catch(() => {
+        alert("Failed to save recipe");
+    });
+}
+
+</script>
+
+</body>
+</html>
