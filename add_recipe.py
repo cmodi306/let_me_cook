@@ -24,9 +24,10 @@ def slugify_dish_name(name: str) -> str:
 def clean_procedure(procedure: str):
     procedure_list = []
     for step in procedure.split("-"):
-        print(step)
         procedure_list.append(step)
-    print(procedure_list)
+    procedure_list = list(filter(None, procedure_list))
+    procedure_list = list(map(lambda s: s.strip(), procedure_list))
+    return procedure_list
 
 def create_recipe_file(recipe):
     recipe_name = slugify_dish_name(recipe.name) + '.yaml'

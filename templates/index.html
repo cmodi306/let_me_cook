@@ -122,10 +122,25 @@ function submitRecipe() {
     .then(res => res.json())
     .then(() => {
         alert("Recipe saved successfully");
+        resetForm();
     })
     .catch(() => {
         alert("Failed to save recipe");
     });
+}
+
+function resetForm() {
+    document.getElementById("dishName").value = "";
+    document.getElementById("procedure").value = "";
+    document.getElementById("category").value = "";
+
+    const ingredientsDiv = document.getElementById("ingredients");
+    ingredientsDiv.innerHTML = `
+        <div class="ingredient-row">
+            <input type="text" placeholder="Ingredient">
+            <button type="button" onclick="removeIngredient(this)">❌</button>
+        </div>
+    `;
 }
 
 </script>
